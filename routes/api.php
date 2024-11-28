@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\GestionConnexion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\PresenceController;
 
 
 Route::get('/user', function (Request $request) {
@@ -27,3 +28,7 @@ Route::post('/register', [GestionConnexion::class, 'register']);
 Route::put('/user', [GestionConnexion::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/user', [GestionConnexion::class, 'delete'])->middleware('auth:sanctum');
 Route::get('/reaction/{post}', [PostController::class, 'Reaction'])->middleware('auth:sanctum');
+
+
+
+Route::post('/presences', [PresenceController::class, 'store']);
