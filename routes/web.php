@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
 Route::get('/', function () {
-    return view('index');
-});
+    return view('auth/login');
+})->middleware('guest');
 
 Route::get('/posts', function () {
     return view('posts', [
