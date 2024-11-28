@@ -1,5 +1,32 @@
 
-
+@php
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Lieu;
+use App\Models\Presence;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+    $todayPresences = Presence::whereDate('created_at', today())->count();
+        $totalAgents = User::count();
+        $totalLieux = Lieu::count();
+        
+        // Calculer le taux de présence
+        $totalExpected = $totalAgents; // Nombre total d'agents attendus
+        $presentToday = Presence::whereDate('created_at', today())
+            ->where('type', 1) // Présence de type "entrée"
+            ->count();
+        $tauxPresence = $totalExpected > 0 ? round(($presentToday / $totalExpected) * 100) : 0;
+    
+        // Récupérer les dernières activités
+        $recentActivities = Presence::with('user')
+            ->latest()
+            ->take(5)
+            ->get();
+    
+@endphp
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
@@ -26,7 +53,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Présences aujourd'hui</p>
-                            <p class="text-white text-2xl font-bold">{{ session('todayPresences') }}</p>
+                            <p class="text-white text-2xl font-bold">{{ ($todayPresences)??0 }}</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,7 +71,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Total Agents</p>
-                            <p class="text-white text-2xl font-bold">{{ session("totalAgents") }}</p>
+                            <p class="text-white text-2xl font-bold">{{ $totalAgents ?? 0 }}</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +89,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Sites de travail</p>
-                            <p class="text-white text-2xl font-bold">{{ session('totalLieux') }}</p>
+                            <p class="text-white text-2xl font-bold">{{ $totalLieux ??0 }}</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +108,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Taux de présence</p>
-                            <p class="text-white text-2xl font-bold">{{ session('tauxPresence') }}%</p>
+                            <p class="text-white text-2xl font-bold">{{ $tauxPresence ??0 }}%</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +153,7 @@
                     <div class="space-y-4">
                             
                        
-                        @forelse(session("recentActivities",[]) as $activity)
+                        @forelse(($recentActivities) as $activity)
                         <div class="flex items-center justify-between border-b dark:border-gray-700 pb-2">
                             <div class="flex items-center">
                                 <div class="w-2 h-2 rounded-full {{ $activity->type === 'entrée' ? 'bg-green-500' : 'bg-red-500' }} mr-3"></div>
@@ -135,6 +162,15 @@
                             <span class="text-xs text-gray-500">{{ $activity->created_at->diffForHumans() }}</span>
                         </div>
                         @empty
+                        <div class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
+                            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <div>
+                              <span class="font-medium">Vide !</span> Aucune activité disponible pour aujourd'hui
+                            </div>
+                          </div>
                             
                         @endforelse
                     </div>
