@@ -49,4 +49,40 @@ class PresenceController extends Controller
             'data' => $presence,
         ], 201);
     }
+
+
+
+    public function checkTodayPresence(Request $request)
+    {
+        $userId = $request->user_id; // ou auth()->id() si vous utilisez l'authentification
+        $today = Carbon::now()->format('Y-m-d');
+        
+        $presences = Presence::where('user_id', $userId)
+            ->whereDate('date', $today)
+            ->get();
+
+        $status = [
+            'debut_a' => false,
+            'fin_a' => false,
+            'pas_debut' => true,
+            'pas_debut' => false,
+        ];
+
+        foreach ($presences as $presence) {
+            if ($presence->type === 1) { // Début de travail
+                $status['debut_a'] = true;
+                $status['pas_debut'] = false;
+                $status['pas_debut'] = true;
+            }
+            if ($presence->type === 0) { // Fin de travail
+                $status['fin_a'] = true;
+                $status['pas_debut'] = false;
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'presence_jour' => $presences
+        ]);
+    }
 }

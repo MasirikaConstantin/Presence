@@ -32,3 +32,6 @@ Route::get('/reaction/{post}', [PostController::class, 'Reaction'])->middleware(
 
 
 Route::post('/presences', [PresenceController::class, 'store']);
+
+
+Route::get('/presences/verifie', [PresenceController::class, 'checkTodayPresence']);
