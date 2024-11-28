@@ -9,13 +9,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-    $todayPresences = Presence::whereDate('created_at', today())->count();
+use Carbon\Carbon;
+    $todayPresences = Presence::whereDate('date', today())->count();
         $totalAgents = User::count();
         $totalLieux = Lieu::count();
         
         // Calculer le taux de présence
         $totalExpected = $totalAgents; // Nombre total d'agents attendus
-        $presentToday = Presence::whereDate('created_at', today())
+        $presentToday = Presence::whereDate('date', today())
             ->where('type', 1) // Présence de type "entrée"
             ->count();
         $tauxPresence = $totalExpected > 0 ? round(($presentToday / $totalExpected) * 100) : 0;
@@ -25,6 +26,25 @@ use Illuminate\View\View;
             ->latest()
             ->take(5)
             ->get();
+  // Définir les labels pour les jours de la semaine
+  $labels = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+// Initialiser un tableau pour stocker les données
+$data = [];
+
+// Parcourir les jours de la semaine
+foreach (range(1, 7) as $day) {
+    // Compter les présences pour chaque jour
+    $data[] = Presence::whereDate('date', Carbon::now()->startOfWeek()->addDays($day - 1))->count();
+}
+
+// Retourner les données formatées en JSON
+ response()->json([
+    'labels' => $labels,
+    'data' => $data
+]);
+
+
     
 @endphp
 <x-app-layout>
@@ -99,7 +119,7 @@ use Illuminate\View\View;
                         </div>
                     </div>
                     <div class="mt-4">
-                        <a href="{{ route('lieux.index') }}" class="text-white text-sm hover:text-yellow-100">Gérer sites →</a>
+                        <a href="{{ route('lieux.create') }}" class="text-white text-sm hover:text-yellow-100">Gérer sites →</a>
                     </div>
                 </div>
 
@@ -182,8 +202,58 @@ use Illuminate\View\View;
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Évolution des présences</h3>
                 <div class="h-64">
                     <!-- Intégrez ici votre graphique préféré (Chart.js, ApexCharts, etc.) -->
+                    <canvas id="presenceChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('presenceChart').getContext('2d');
+            const presenceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @json($labels), // Utilisez les données de Laravel
+                    datasets: [{
+                        label: 'Présences',
+                        data: @json($data),
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'white'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.2)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: 'white'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.2)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    
 </x-app-layout>

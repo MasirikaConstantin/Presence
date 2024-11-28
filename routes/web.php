@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\GestionLieux;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
@@ -41,14 +43,14 @@ Route::get('/change-language/{lang}', function ($lang) {
 Route::get("/presence", function ($presence) {
 
 })->name('presences.index');
-
+/*
 Route::get("/users", function ($presence) {
 
 })->name('users.index');
+Route::get("/users/new", function ($presence) {
 
-Route::get("/lieux", function ($presence) {
-
-})->name('lieux.index');
+})->name('users.create');
+*/
 
 Route::get("/statistiques", function ($presence) {
 
@@ -56,10 +58,17 @@ Route::get("/statistiques", function ($presence) {
 
 
 
-Route::get("/users/new", function ($presence) {
 
-})->name('users.create');
+Route::prefix('/lieux')->name('lieux.')->controller(GestionLieux::class)->group(function () {
+    
+    Route::get("/new","new")->name('create');
+    Route::post("/new","store")->name('store');
+    Route::delete("/destroy/{lieu}","destroy")->name('destroy');
+    Route::post('/lieux/{lieu}', "update")->name('update');
+})->middleware(['auth']);
 
-Route::get("/lieu/new", function ($presence) {
 
-})->name('lieux.create');
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('users', UserController::class);
+});

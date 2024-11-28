@@ -24,6 +24,7 @@ class User extends Authenticatable
         "type",
         'etat',
         'password',
+        'lieu_id'
     ];
 
     /**
@@ -69,5 +70,10 @@ class User extends Authenticatable
         $prefix = 'AG';
         $randomNumber = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4)); // 4 caractères aléatoires
         return $prefix . $randomNumber;
+    }
+    public function lieux()
+    {
+        return $this->belongsToMany(Lieu::class, 'lieu_user')
+                    ->withTimestamps();
     }
 }
