@@ -1,26 +1,10 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
 
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Dashboard') }}
+                {{ __('Tableau de bord administrateur') }}
             </h2>
             <div class="flex space-x-3">
                 <span class="bg-green-500 px-3 py-1 rounded-full text-white text-sm">
@@ -42,7 +26,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Présences aujourd'hui</p>
-                            <p class="text-white text-2xl font-bold">{{ $todayPresences }}</p>
+                            <p class="text-white text-2xl font-bold">{{ session('todayPresences') }}</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +44,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Total Agents</p>
-                            <p class="text-white text-2xl font-bold">{{ $totalAgents }}</p>
+                            <p class="text-white text-2xl font-bold">{{ session("totalAgents") }}</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +62,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Sites de travail</p>
-                            <p class="text-white text-2xl font-bold">{{ $totalLieux }}</p>
+                            <p class="text-white text-2xl font-bold">{{ session('totalLieux') }}</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,7 +81,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-white text-sm font-medium">Taux de présence</p>
-                            <p class="text-white text-2xl font-bold">{{ $tauxPresence }}%</p>
+                            <p class="text-white text-2xl font-bold">{{ session('tauxPresence') }}%</p>
                         </div>
                         <div class="bg-white bg-opacity-30 rounded-full p-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,7 +124,9 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Dernières activités</h3>
                     <div class="space-y-4">
-                        @foreach($recentActivities as $activity)
+                            
+                       
+                        @forelse(session("recentActivities",[]) as $activity)
                         <div class="flex items-center justify-between border-b dark:border-gray-700 pb-2">
                             <div class="flex items-center">
                                 <div class="w-2 h-2 rounded-full {{ $activity->type === 'entrée' ? 'bg-green-500' : 'bg-red-500' }} mr-3"></div>
@@ -148,7 +134,9 @@
                             </div>
                             <span class="text-xs text-gray-500">{{ $activity->created_at->diffForHumans() }}</span>
                         </div>
-                        @endforeach
+                        @empty
+                            
+                        @endforelse
                     </div>
                 </div>
             </div>

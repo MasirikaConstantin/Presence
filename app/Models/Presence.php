@@ -16,4 +16,8 @@ class Presence extends Model
         'type',
         'date',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id'); // 'user_id' est la clé étrangère
+    }
 }

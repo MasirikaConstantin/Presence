@@ -37,3 +37,29 @@ Route::get('/change-language/{lang}', function ($lang) {
     }
     return Redirect::back();
 })->name('change.language');
+
+Route::get("/presence", function ($presence) {
+
+})->name('presences.index');
+
+Route::get("/users", function ($presence) {
+
+})->name('users.index');
+
+Route::get("/lieux", function ($presence) {
+
+})->name('lieux.index');
+
+Route::get("/statistiques", function ($presence) {
+
+})->name('statistiques');
+
+
+
+Route::get("/users/new", function ($presence) {
+
+})->name('users.create');
+
+Route::get("/lieu/new", function ($presence) {
+
+})->name('lieux.create');
