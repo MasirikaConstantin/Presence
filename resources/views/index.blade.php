@@ -10,7 +10,13 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
+          <!-- Styles / Scripts -->
+        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    @endif
       
     </head>
     <body class="font-sans antialiased dark:bg-black dark:text-white/50">
