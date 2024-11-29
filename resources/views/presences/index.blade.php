@@ -48,14 +48,24 @@
                         <a href="{{ route('presences.index') }}" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-3 transition duration-150 ease-in-out">
                             Réinitialiser
                         </a>
+                        <a href="{{ route('presences.imprimer', ['date' => $presences->query['date'] ?? null, 'status' => $presences->query['status'] ?? null]) }}" 
+                            target="_blank" 
+                            class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-3 transition duration-150 ease-in-out">
+                            Imprimer en PDF
+                         </a>
                     </div>
                 </form>
             </div>
-        
         <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8 bg-gray-700">
+            
             <div class="inline-block min-w-full py-2 align-middle">
-                <div class="overflow-hidden shadow ring-1 ring-black bg-gray-700 ring-opacity-5 md:rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-300 bg-gray-700">
+
+                
+               
+
+                
+                <div id="printable-area" class="overflow-hidden shadow ring-1 ring-black bg-gray-700 ring-opacity-5 px-3 md:rounded-lg">
+                    <table id="myTable" class="min-w-full divide-y divide-gray-300 bg-gray-700 ">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Matricule</th>
@@ -110,4 +120,54 @@
         </div>
     </div>
 </div>
+<script>
+                    
+    // Sélectionnez tous les éléments du tableau
+var elements = document.querySelectorAll("table #tr");
+
+// Parcourez tous les éléments
+for(var i = 0; i < elements.length; i++) {
+// Si l'élément est supérieur à 3, cachez-le
+if(i >= 15) {
+    elements[i].style.display = "none";
+}
+}
+
+// Sélectionnez tous les éléments du tableau
+var elements = document.querySelectorAll("table #trs");
+
+// Parcourez tous les éléments
+for(var i = 0; i < elements.length; i++) {
+// Si l'élément est supérieur à 3, cachez-le
+if(i >= 50) {
+    elements[i].style.display = "none";
+}
+}
+
+function filterTable() {
+
+// Declare variables
+var input, filter, table, tr, td, i, txtValue;
+input = document.getElementById("myInput");
+filter = input.value.toUpperCase();
+table = document.getElementById("myTable");
+tr = table.getElementsByTagName("tr");
+
+// Loop through all table rows, and hide those who don't match the search query
+for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1];
+
+    if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+    }
+}
+
+}
+
+</script>
 </x-app-layout>

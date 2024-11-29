@@ -30,7 +30,10 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        
         $request->session()->regenerate();
+
+        $authUserRole = Auth::user()->etat;
 
         
         $users = Utilisateur::with('lieu')->get();
@@ -47,19 +50,23 @@ class AuthenticatedSessionController extends Controller
     $tauxPresence = $totalExpected > 0 ? round(($presentToday / $totalExpected) * 100) : 0;
 
     // Récupérer les dernières activités 
-    $recentActivities = Presence::with('user')
-        ->latest()
-        ->take(5)
-        ->get();
+    
+        if ($authUserRole == 0){
+            return view('dashboard', compact(
+                'users',
+                'todayPresences',
+                'totalAgents', 
+                'totalLieux',
+                'tauxPresence',
+                //'recentActivities'
+            ));
+        }else if ($authUserRole == 1){
+            return redirect()->intended(route('autres', absolute: false));
+        }else {
+            return redirect()->intended(route('autres', absolute: false));
 
-    return view('users.index', compact(
-        'users',
-        'todayPresences',
-        'totalAgents', 
-        'totalLieux',
-        'tauxPresence',
-        'recentActivities'
-    ));
+        }
+        
             
     }
 
