@@ -1,4 +1,4 @@
-@section("titre", "Les Statistique")
+@section("titre", "Les Statistiques")
 <x-app-layout>
     <script src="//unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
