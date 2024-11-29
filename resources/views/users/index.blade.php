@@ -1,6 +1,5 @@
 <x-app-layout>
          
-    
     <div class="container mx-auto px-4 py-6">
         <!-- Titre -->
         <h1 class="text-3xl font-extrabold text-gray-200 mb-6">Liste des Utilisateurs</h1>
@@ -48,35 +47,40 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     @foreach ($users as $user)
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-400">
-                        <td class="px-6 py-4 text-sm">{{ $user['id'] }}</td>
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-700">
+                        <td class="px-6 py-4 text-sm">{{ $user->id }}</td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <a href="/users.php?users={{ $user['id'] }}" class="text-blue-600 hover:underline">{{ $user['name'] }}</a>
+                            <a href="{{ route('voir', $user->id) }}" class="text-blue-600 hover:underline">
+                                {{ $user->name }}
+                            </a>
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{-- Afficher les noms des lieux --}}
-                            @if($user->lieux->isNotEmpty())
-                                {{ $user->lieux->pluck('nom')->implode(', ') }}
-                            @else
-                                Aucun lieu
-                            @endif
+                            {{ $user->lieu ? $user->lieu->nom : 'Aucun lieu' }}
                         </td>
                         <td class="px-6 py-4">
-                            <button data-modal-target="deleteModal{{ $user['id'] }}" data-modal-toggle="deleteModal{{ $user['id'] }}" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                            <button data-modal-target="deleteModal{{ $user->id }}" 
+                                    data-modal-toggle="deleteModal{{ $user->id }}" 
+                                    class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                                 Supprimer
                             </button>
                 
-                            <a href="{{ route('users.show', ['user' => $user]) }}" type="button" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Modifier</a>
+                            <a href="{{ route('users.show', ['user' => $user]) }}" 
+                               class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                                Modifier
+                            </a>
                         </td>
                     </tr>
                 
-    
                     <!-- Modal de confirmation -->
-                    <div id="deleteModal{{ $user['id'] }}" tabindex="-1" class="fixed inset-0 z-50 hidden p-4 overflow-y-auto bg-gray-900 bg-opacity-50">
+                    <div id="deleteModal{{ $user->id }}" tabindex="-1" 
+                         class="fixed inset-0 z-50 hidden p-4 overflow-y-auto bg-gray-900 bg-opacity-50">
                         <div class="relative w-full max-w-md mx-auto">
                             <div class="bg-white rounded-lg shadow-md">
-                                <button type="button" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700" data-modal-hide="deleteModal{{ $user['id'] }}">
+                                <button type="button" 
+                                        class="absolute top-3 right-3 text-gray-400 hover:text-gray-700" 
+                                        data-modal-hide="deleteModal{{ $user->id }}">
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
@@ -85,12 +89,20 @@
                                     <svg class="mx-auto mb-4 w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <h3 class="mb-5 text-lg text-gray-700 text-center">Êtes-vous sûr de vouloir supprimer cet utilisateur ?</h3>
+                                    <h3 class="mb-5 text-lg text-gray-700 text-center">
+                                        Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+                                    </h3>
                                     <div class="flex justify-center gap-4">
-                                        <a href="?delete_id={{ $user['id'] }}" class="bg-red-600 text-white hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5">
-                                            Oui, supprimer
-                                        </a>
-                                        <button data-modal-hide="deleteModal{{ $user['id'] }}" class="bg-gray-200 hover:bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="bg-red-600 text-white hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                                                Oui, supprimer
+                                            </button>
+                                        </form>
+                                        <button data-modal-hide="deleteModal{{ $user->id }}" 
+                                                class="bg-gray-200 hover:bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
                                             Non, annuler
                                         </button>
                                     </div>
@@ -98,7 +110,7 @@
                             </div>
                         </div>
                     </div>
-                    @endforeach
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -186,3 +198,5 @@
             </script>
    
 </x-app-layout>
+
+

@@ -24,6 +24,7 @@ class GestionLieux extends Controller
             'nom' => 'required',
             'latitude' => 'required',
             'longitude' => 'required',
+            'h_debut'=>'required', 'h_fin'=>'required',
         ]);
 
         Lieu::create($validated);
@@ -38,6 +39,7 @@ class GestionLieux extends Controller
             'nom' => 'required',
             'latitude' => 'required',
             'longitude' => 'required',
+            'h_debut'=>'required', 'h_fin'=>'required',
         ]);
 
         $lieu->update($validated);

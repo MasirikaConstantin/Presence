@@ -1,6 +1,7 @@
 <x-app-layout>
+
     <div class="container mx-auto p-6">
-           <h1 class="text-2xl text-gray-200 font-bold mb-6">Créer un Utilisateur</h1>
+           <h1 class="text-2xl text-gray-200 font-bold mb-6"> {{ $user->exists ? 'Modifier un utilisateur' : 'CréerUn utilisateur' }}</h1>
            
            @if(session('success'))
                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -54,25 +55,60 @@
                    <label class="block text-gray-200 text-sm font-bold mb-2" for="lieu_id">
                        Lieu :
                    </label>
+               
+
                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-        id="lieu_id" 
-        name="lieu_id" 
-        required>
-    <option value="">Sélectionnez un lieu</option>
-    @foreach($lieux as $lieu)
-        <option value="{{ $lieu->id }}"
-            @if(old('lieu_id') == $lieu->id || (isset($user) && $user->lieux->contains($lieu->id)))
-                selected
-            @endif>
-            {{ $lieu->nom }}
-        </option>
-    @endforeach
-</select>
+                    id="lieu_id" 
+                    name="lieu_id" 
+                    required>
+
+                        <option value="">Sélectionnez un lieu</option>
+                        
+                        @foreach($lieux as $lieu)
+                        <option value="{{ $lieu->id }}"
+                            @if(old('lieu_id') == $lieu->id || (isset($user) && $user->lieu && $user->lieu->id == $lieu->id))
+                                selected
+                            @endif>
+                            {{ $lieu->nom }}
+                        </option>
+                    @endforeach
+                    </select>
 
                    @error("lieu_id")
                        <p class="mt-2 text-red-500 text-sm">{{ $message }}</p>
                    @enderror
                </div>
+
+
+               <div class="mb-4">
+                <label class="block text-gray-200 text-sm font-bold mb-2" for="lieu_id">
+                    Categorie de l'utilisateur :
+                </label>
+            
+
+                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                 id="categorie_id" 
+                 name="categorie_id" 
+                 required>
+
+                     <option value="">Sélectionnez une categorie</option>
+                     
+                     @foreach($categories as $categorie)
+                     <option value="{{ $categorie->id }}"
+                         @if(old('categorie_id') == $categorie->id || (isset($user) && $user->categorie && $user->categorie->id == $categorie->id))
+                             selected
+                         @endif>
+                         {{ $categorie->nom }}
+                     </option>
+                 @endforeach
+                 </select>
+
+                @error("categorie_id")
+                    <p class="mt-2 text-red-500 text-sm">{{ $message }}</p>
+                @enderror
+            </div>
+
+
        
                <div class="mb-4">
                    <label class="block text-gray-200 text-sm font-bold mb-2" for="password">

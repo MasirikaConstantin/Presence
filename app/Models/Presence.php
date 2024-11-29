@@ -15,9 +15,24 @@ class Presence extends Model
         'latitude',
         'type',
         'date',
+        "utilisateur_id",
     ];
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id'); // 'user_id' est la clé étrangère
+        return $this->belongsTo(Utilisateur::class, 'utilisateur_id'); // 'user_id' est la clé étrangère
     }
+
+  
+
+public function lieux()
+{
+    return $this->hasMany(Lieu::class);
+}
+
+public function utilisateur()
+    {
+        return $this->belongsTo(Utilisateur::class);
+    }
+
+   
 }

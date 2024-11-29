@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GestionLieux;
+use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Models\Post;
@@ -40,9 +41,7 @@ Route::get('/change-language/{lang}', function ($lang) {
     return Redirect::back();
 })->name('change.language');
 
-Route::get("/presence", function ($presence) {
 
-})->name('presences.index');
 /*
 Route::get("/users", function ($presence) {
 
@@ -51,6 +50,9 @@ Route::get("/users/new", function ($presence) {
 
 })->name('users.create');
 */
+Route::get('/presences', [PresenceController::class, 'index'])->name('presences.index');
+
+
 
 Route::get("/statistiques", function ($presence) {
 
@@ -71,4 +73,6 @@ Route::prefix('/lieux')->name('lieux.')->controller(GestionLieux::class)->group(
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
+    Route::get('user/{utilisateur}', [UserController::class,"voir"])->name('voir');
 });
+

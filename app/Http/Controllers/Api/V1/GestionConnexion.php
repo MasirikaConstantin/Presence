@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Utilisateur;
 use Illuminate\Validation\ValidationException;
 
 class GestionConnexion extends Controller
@@ -17,11 +18,19 @@ class GestionConnexion extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users',
-                'password' => 'required|min:6|confirmed',
+                'password' => 'required|min:4|confirmed',
+                "lieu_id" => "required|exists:lieus,id",
+                "categorie_id" => "required|exists:categories,id",
+                "address"=>"nullable|min:5"
+                
+
             ]);
 
-            $user = User::create([
+            $user = Utilisateur::create([
                 'name' => $validated['name'],
+                'lieu_id' => $validated['lieu_id'],
+                'address' => $validated['address'],
+                'categorie_id' => $validated['categorie_id'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
             ]);
@@ -56,7 +65,7 @@ class GestionConnexion extends Controller
         ]);
 
         // Récupérer l'utilisateur par son matricule
-        $user = User::where('matricule', $validated['matricule'])->first();
+        $user = Utilisateur::where('matricule', $validated['matricule'])->first();
 
         if (!$user || !Hash::check($validated['password'], $user->password)) {
             return response()->json([

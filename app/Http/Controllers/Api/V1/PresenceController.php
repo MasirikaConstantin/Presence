@@ -13,7 +13,7 @@ class PresenceController extends Controller
     {
         // Valider les données de la requête
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'utilisateur_id' => 'required|exists:utilisateurs,id',
             'longitude' => 'required|string',
             'latitude' => 'required|string',
             'type' => 'required|boolean',
@@ -24,7 +24,7 @@ class PresenceController extends Controller
         $dateToCheck = Carbon::parse($validated['date'])->format('Y-m-d');
 
         // Vérifier si l'utilisateur a déjà enregistré une présence avec le même type à la même date
-        $existingPresence = Presence::where('user_id', $validated['user_id'])
+        $existingPresence = Presence::where('utilisateur_id', $validated['utilisateur_id'])
             ->where('type', $validated['type'])
             ->whereDate('date', $dateToCheck)
             ->first();
@@ -37,7 +37,7 @@ class PresenceController extends Controller
 
         // Créer la nouvelle présence
         $presence = Presence::create([
-            'user_id' => $validated['user_id'],
+            'utilisateur_id' => $validated['utilisateur_id'],
             'longitude' => $validated['longitude'],
             'latitude' => $validated['latitude'],
             'type' => $validated['type'],
@@ -54,10 +54,10 @@ class PresenceController extends Controller
 
     public function checkTodayPresence(Request $request)
     {
-        $userId = $request->user_id; // ou auth()->id() si vous utilisez l'authentification
+        $userId = $request->utilisateur_id; // ou auth()->id() si vous utilisez l'authentification
         $today = Carbon::now()->format('Y-m-d');
         
-        $presences = Presence::where('user_id', $userId)
+        $presences = Presence::where('utilisateur_id', $userId)
             ->whereDate('date', $today)
             ->get();
 

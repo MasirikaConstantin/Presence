@@ -26,7 +26,8 @@ class UserValidator extends FormRequest
             //'adresse' => 'required|string|max:255',
             'lieu_id' => 'required|exists:lieus,id',
             'password' => 'required|min:6',
-            "email"=>"required|email|unique:users,email",
+            "email"=>"required|email|unique:utilisateurs,email",
+            "categorie_id"=>"required|exists:categories,id",
         ];
     }
 }

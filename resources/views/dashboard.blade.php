@@ -4,30 +4,31 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Lieu;
 use App\Models\Presence;
-use App\Models\User;
+use App\Models\Utilisateur;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Carbon\Carbon;
-    $todayPresences = Presence::whereDate('date', today())->count();
-        $totalAgents = User::count();
-        $totalLieux = Lieu::count();
-        
-        // Calculer le taux de présence
-        $totalExpected = $totalAgents; // Nombre total d'agents attendus
-        $presentToday = Presence::whereDate('date', today())
-            ->where('type', 1) // Présence de type "entrée"
-            ->count();
-        $tauxPresence = $totalExpected > 0 ? round(($presentToday / $totalExpected) * 100) : 0;
-    
-        // Récupérer les dernières activités
-        $recentActivities = Presence::with('user')
-            ->latest()
-            ->take(5)
-            ->get();
-  // Définir les labels pour les jours de la semaine
-  $labels = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+$todayPresences = Presence::whereDate('date', today())->count();
+$totalAgents = Utilisateur::count();
+$totalLieux = Lieu::count();
+
+// Calculer le taux de présence pour aujourd'hui uniquement
+$totalExpected = $totalAgents; // Nombre total d'agents attendus
+$presentToday = Presence::whereDate('date', today())
+    ->where('type', 1) // Présence de type "entrée"
+    ->count();
+$tauxPresence = $totalExpected > 0 ? round(($presentToday / $totalExpected) * 100) : 0;
+
+// Récupérer les dernières activités
+$recentActivities = Presence::with('user')
+    ->latest()
+    ->take(5)
+    ->get();
+
+// Définir les labels pour les jours de la semaine
+$labels = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
 // Initialiser un tableau pour stocker les données
 $data = [];
@@ -39,14 +40,13 @@ foreach (range(1, 7) as $day) {
 }
 
 // Retourner les données formatées en JSON
- response()->json([
+response()->json([
     'labels' => $labels,
     'data' => $data
 ]);
-
-
     
 @endphp
+@section("titre","Tableau de Bord")
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
@@ -163,6 +163,18 @@ foreach (range(1, 7) as $day) {
                                 </svg>
                             </span>
                             <span class="text-gray-700 dark:text-gray-200">Nouveau site</span>
+                        </a>
+
+
+                        <a href="{{ route('presences.index') }}" class="flex items-center p-4 bg-green-50 dark:bg-green-900/30 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/50 transition-all">
+                            <span class="bg-green-500 rounded-lg p-2 mr-3">
+                                
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h10"/>
+                                  </svg>
+                                  
+                            </span>
+                            <span class="text-gray-700 dark:text-gray-200">Toutes les Présences</span>
                         </a>
                     </div>
                 </div>
