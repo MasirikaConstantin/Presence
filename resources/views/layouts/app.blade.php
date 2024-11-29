@@ -29,15 +29,7 @@
     @endif
 
     <style>
-        @font-face {
-                        font-family: 'Google';
-                        src: url('{{asset('ProductSans-Light.ttf')}}');
-                        font-weight: 500;
-                        
-                    }
-                    body{
-                        font-family: 'Google' !important;
-                    }
+     
                     
     </style>
     </head>

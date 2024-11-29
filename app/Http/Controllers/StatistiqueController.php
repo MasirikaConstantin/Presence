@@ -19,13 +19,21 @@ class StatistiqueController extends Controller
 {
     $query = Presence::with(['utilisateur.lieu', 'utilisateur.categorie']);
 
-    // Filtre par date
-    if ($request->filled('date')) {
-        $date = Carbon::parse($request->date)->format('Y-m-d');
-        $query->whereDate('date', $date);
+    // Filtre par plage de dates
+    if ($request->filled('date_start') || $request->filled('date_end')) {
+        $dateStart = $request->filled('date_start') ? Carbon::parse($request->date_start)->startOfDay() : null;
+        $dateEnd = $request->filled('date_end') ? Carbon::parse($request->date_end)->endOfDay() : null;
+
+        if ($dateStart && $dateEnd) {
+            $query->whereBetween('date', [$dateStart, $dateEnd]);
+        } elseif ($dateStart) {
+            $query->where('date', '>=', $dateStart);
+        } elseif ($dateEnd) {
+            $query->where('date', '<=', $dateEnd);
+        }
     }
 
-    // Récupérer tous les résultats pour pouvoir les filtrer par statut
+    // Récupérer tous les résultats pour les filtres et les transformations
     $presences = $query->get()->map(function ($presence) {
         // Conversion des coordonnées
         $presenceLat = (float) str_replace(',', '.', $presence->latitude);
@@ -86,6 +94,7 @@ class StatistiqueController extends Controller
     // Retourner la vue avec toutes les données
     return view('statistiques.index', ['data' => $presences]);
 }
+
     private function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
     {
         $dLat = deg2rad($lat2 - $lat1);

@@ -76,40 +76,30 @@
         
 
     <div class="bg-gray-700 p-8 rounded-lg shadow-lg mb-6">
-        <form action="{{ route('presences.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Recherche rapide -- >
-            <div class="relative">
-                <input type="search" name="search" value="{{ request('search') }}" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Recherche Rapide" />
-            </div-->
-    <p class="text-gray-200 font-bold text-xl" >Filtré en terme de date</p>
+        <form action="{{ route('statistiques.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            
+            <p class="text-gray-200 font-bold text-xl">Filtrer par dates</p>
+        
             <!-- Filtre par date de début -->
             <div class="relative">
                 <input type="date" name="date_start" value="{{ request('date_start') }}" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Date de début" />
             </div>
-    
+        
             <!-- Filtre par date de fin -->
             <div class="relative">
                 <input type="date" name="date_end" value="{{ request('date_end') }}" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Date de fin" />
             </div>
-    
-            <!-- Filtre par statut -->
-            <!--div class="flex space-x-2">
-                <select name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-4 focus:ring-blue-500 focus:border-blue-500 flex-grow">
-                    <option value="">Tous les statuts</option>
-                    <option value="Présent" {{ request('status') === 'Présent' ? 'selected' : '' }}>Présents</option>
-                    <option value="Absent" {{ request('status') === 'Absent' ? 'selected' : '' }}>Absents</option>
-                </select>
-            </div-->
-    
+        
             <div class="md:col-span-4 flex justify-end space-x-2">
                 <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-3 transition duration-150 ease-in-out">
                     Appliquer les filtres
                 </button>
-                <a href="{{ route('presences.index') }}" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-3 transition duration-150 ease-in-out">
+                <a href="{{ route('statistiques.index') }}" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-3 transition duration-150 ease-in-out">
                     Réinitialiser
                 </a>
             </div>
         </form>
+        
     </div>
 
     
