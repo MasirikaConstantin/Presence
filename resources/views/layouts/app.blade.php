@@ -29,16 +29,15 @@
     @endif
 
     <style>
-     /* Appliquer Comfortaa à tout le site */
-body {
-    font-family: 'Comfortaa', sans-serif;
-}
-
-/* Appliquer Square Peg à des titres spécifiques */
-h1, h2, h3 {
-    font-family: 'Square Peg', cursive;
-}
-
+        @font-face {
+                        font-family: 'Google';
+                        src: url('{{asset('ProductSans-Light.ttf')}}');
+                        font-weight: 500;
+                        
+                    }
+                    body{
+                        font-family: 'Google' !important;
+                    }
                     
     </style>
     </head>
