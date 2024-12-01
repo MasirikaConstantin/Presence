@@ -42,6 +42,7 @@
                                         <tr>
                         <th scope="col" class="px-6 py-3">ID</th>
                         <th scope="col" class="px-6 py-3">Nom</th>
+                        <th scope="col" class="px-6 py-3">Matricule</th>
                         <th scope="col" class="px-6 py-3">Lieu</th>
                         <th scope="col" class="px-6 py-3">Action</th>
                     </tr>
@@ -55,6 +56,9 @@
                             <a href="{{ route('voir', $user->id) }}" class="text-blue-600 hover:underline">
                                 {{ $user->name }}
                             </a>
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ $user->matricule }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ $user->lieu ? $user->lieu->nom : 'Aucun lieu' }}
