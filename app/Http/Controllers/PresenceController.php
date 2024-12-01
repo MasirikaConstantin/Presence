@@ -16,7 +16,8 @@ class PresenceController extends Controller
     public const DEFAULT_RADIUS = 100;
     public function index(Request $request)
 {
-    $query = Presence::with(['utilisateur.lieu', 'utilisateur.categorie']);
+    $query = Presence::with(['utilisateur.lieu', 'utilisateur.categorie'])
+                    ->orderBy('date', 'desc'); // Ajout de l'ordre décroissant
 
     // Collection pour stocker les résultats transformés
     $transformedPresences = collect();
@@ -27,7 +28,7 @@ class PresenceController extends Controller
         $query->whereDate('date', $date);
     }
 
-    // Récupérer d'abord tous les résultats pour pouvoir les filtrer par statut
+    // Le reste du code reste identique
     $presences = $query->get()->map(function ($presence) {
         // Conversion des coordonnées
         $presenceLat = (float) str_replace(',', '.', $presence->latitude);
@@ -97,7 +98,7 @@ class PresenceController extends Controller
         $currentPage,
         ['path' => request()->url(), 'query' => request()->query()]
     );
-    //return $presences;
+    
     session(['presences' => $presences]);
 
     return view('presences.index', compact('presences'));
