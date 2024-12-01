@@ -17,7 +17,7 @@ class PresenceController extends Controller
     public function index(Request $request)
 {
     $query = Presence::with(['utilisateur.lieu', 'utilisateur.categorie'])
-                    ->orderBy('date', 'desc'); // Ajout de l'ordre décroissant
+                    ->orderBy('id', 'desc'); // Ajout de l'ordre décroissant
 
     // Collection pour stocker les résultats transformés
     $transformedPresences = collect();
@@ -105,6 +105,9 @@ class PresenceController extends Controller
 }
     private function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
     {
+        if (!$this->validateCoordinates($lat1, $lon1) || !$this->validateCoordinates($lat2, $lon2)) {
+            throw new \InvalidArgumentException('Coordonnées géographiques invalides');
+        }
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
         
@@ -116,6 +119,11 @@ class PresenceController extends Controller
         
         return self::EARTH_RADIUS * $c;
     }
+    private function validateCoordinates(float $lat, float $lon): bool 
+{
+    return $lat >= -90 && $lat <= 90 && $lon >= -180 && $lon <= 180;
+}
+
 
 
 
