@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 class GestionLieux extends Controller
 {
     public function new(){
-        return view('lieux.new',['lieux'=>Lieu::all()]);
+        return view('lieux.new',['lieux'=>Lieu::orderBy("nom",'asc')->get()]);
     }
     
 
     public function index()
     {
         $lieux = Lieu::orderBy('nom')->get();
-        return view('lieux.create', compact('lieux'));
+        return view('lieux.create', [compact('lieux')]);
     }
 
     public function store(Request $request)

@@ -36,8 +36,6 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            // Attacher le lieu à l'utilisateur
-            //$user->lieux()->attach($request->lieu_id);
 
             return redirect()->route('users.create')
                 ->with('success', 'Utilisateur créé avec succès.');
@@ -70,8 +68,6 @@ class UserController extends Controller
             'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
         ]);
     
-        // Synchroniser le lieu
-        //$user->lieux()->sync([$validated['lieu_id']]);
     
         return redirect()->route('users.index')->with('success', 'Utilisateur  mis à jour avec succès.');
     
@@ -80,8 +76,8 @@ class UserController extends Controller
     public function voir( $id){
         $utilisateur = Utilisateur::with(['lieu', 'categorie', 'presences'])->findOrFail($id);
 
-    // Traitement des présences
-    $presences = $utilisateur->presences->map(function ($presence) use ($utilisateur) {
+        // Traitement des présences
+        $presences = $utilisateur->presences->map(function ($presence) use ($utilisateur) {
         $presenceLat = (float) str_replace(',', '.', $presence->latitude);
         $presenceLon = (float) str_replace(',', '.', $presence->longitude);
         $lieuLat = (float) str_replace(',', '.', $utilisateur->lieu->latitude);

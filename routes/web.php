@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\GestionCategorie;
 use App\Http\Controllers\GestionLieux;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ProfileController;
@@ -28,9 +29,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified','rolemanager:admin'])->name('dashboard');
 
 
-Route::get('/erreur', function () {
+Route::middleware(['auth', 'verified','rolemanager:utilisateur'])->get('/erreur', function () {
     return view('autres');
-})->middleware(['auth', 'verified','rolemanager:utilisateur'])->name('autres');
+})->name('autres');
 
 
 
@@ -71,17 +72,17 @@ Route::get("/statistiques", function ($presence) {
 
 
 
-Route::prefix('/lieux')->name('lieux.')->controller(GestionLieux::class)->group(function () {
+Route::prefix('/lieux')->middleware(['auth','verified','rolemanager:admin'])->name('lieux.')->controller(GestionLieux::class)->group(function () {
     
     Route::get("/new","new")->name('create');
     Route::post("/new","store")->name('store');
     Route::delete("/destroy/{lieu}","destroy")->name('destroy');
     Route::post('/lieux/{lieu}', "update")->name('update');
-})->middleware(['auth','rolemanager:admin']);
+});
 
 
 
-Route::middleware(['auth','rolemanager:admin'])->group(function () {
+Route::middleware(['auth','verified','rolemanager:admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::get('user/{utilisateur}', [UserController::class,"voir"])->name('voir');
 });
@@ -100,7 +101,7 @@ Route::get('/statistiques', [StatistiqueController::class, 'index'])->name('stat
 
 Route::get('/presences/pdf', [PresenceController::class, 'exportPdf'])->name('presences.exportPdf');
 
-Route::get('/presences/imprimer', function () {
+Route::middleware(['auth','verified','rolemanager:admin'])->get('/presences/imprimer', function () {
     $presences = session('presences');
     $filterDate = request()->get('date', 'N/A'); // Récupération du paramètre 'date'
     $status = request()->get('status', 'Tous'); // Récupération du paramètre 'status'
@@ -112,4 +113,12 @@ Route::get('/presences/imprimer', function () {
     $pdf = Pdf::loadView('presences.pdf', compact('presences', 'filterDate', 'status'));
     return $pdf->stream('presences.pdf');
 })->name('presences.imprimer');
+
+Route::prefix('/categories')->middleware(['auth','verified','rolemanager:admin'])->name('categories.')->controller(GestionCategorie::class)->group(function () {
+    
+    Route::get("/new","new")->name('create');
+    Route::post("/new","store")->name('store');
+    Route::delete("/destroy/{categories}","destroy")->name('destroy');
+    Route::post('/categories/{categories}', "update")->name('update');
+});
 
