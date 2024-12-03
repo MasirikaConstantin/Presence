@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\PdfController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GestionCategorie;
@@ -122,3 +123,4 @@ Route::prefix('/categories')->middleware(['auth','verified','rolemanager:admin']
     Route::post('/categories/{categories}', "update")->name('update');
 });
 
+Route::get('/generate-pdf', [PdfController::class, 'generatePdf']);
