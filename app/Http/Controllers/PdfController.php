@@ -28,7 +28,7 @@ class PdfController extends Controller
     public function generatePdf(Request $request)
 {
     // Reprenez les mêmes filtres que dans la méthode index
-    $query = Presence::with(['utilisateur.lieu', 'utilisateur.categorie']);
+    $query = Presence::with(['utilisateur.lieu', 'utilisateur.categorie'])->orderBy('id', 'desc');
     
     if ($request->filled('date_start') && $request->filled('date_end')) {
         $startDate = Carbon::parse($request->date_start)->startOfDay();
@@ -97,17 +97,17 @@ class PdfController extends Controller
 
     // Tableau
     $pdf->SetFillColor(200, 220, 255);
-    $pdf->Cell(40, 10, 'Nom', 1, 0, 'C', true);
+    $pdf->Cell(60, 10, 'Nom', 1, 0, 'C', true);
     $pdf->Cell(40, 10, 'Date', 1, 0, 'C', true);
-    $pdf->Cell(40, 10, 'Heure', 1, 0, 'C', true);
-    $pdf->Cell(40, 10, 'Statut', 1, 1, 'C', true);
+    $pdf->Cell(30, 10, 'Heure', 1, 0, 'C', true);
+    $pdf->Cell(50, 10, 'Statut', 1, 1, 'C', true);
 
     // Contenu des données
     foreach ($presences as $presence) {
-        $pdf->Cell(40, 10, utf8_decode($presence->utilisateur->name) ?? 'N/A', 1);
+        $pdf->Cell(60, 10, utf8_decode($presence->utilisateur->name) ?? 'N/A', 1);
         $pdf->Cell(40, 10, Carbon::parse($presence->date)->format('d-m-Y'), 1);
-        $pdf->Cell(40, 10, Carbon::parse($presence->date)->format('H:i:s'), 1);
-        $pdf->Cell(40, 10, $presence->statut, 1, 1);
+        $pdf->Cell(30, 10, Carbon::parse($presence->date)->format('H:i:s'), 1);
+        $pdf->Cell(50, 10, utf8_decode($presence->statut), 1, 1);
     }
 
     // Téléchargement ou affichage
