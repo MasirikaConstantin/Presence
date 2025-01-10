@@ -86,7 +86,7 @@ class UserController extends Controller
         return self::EARTH_RADIUS * $c;
     }
 public  function mes(){
-    $user = Utilisateur::all();
+    $user = User::all();
     return UserRessource::collection($user);
 }
 }
