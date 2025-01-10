@@ -89,4 +89,7 @@ public  function mes(){
     $user = User::all();
     return UserRessource::collection($user);
 }
+public function show(Utilisateur $user){
+    return new UserRessource($user);
+}
 }
