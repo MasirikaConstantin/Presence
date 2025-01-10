@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserValidator;
+use App\Http\Resources\UserRessource;
 use App\Models\Categorie;
 use App\Models\Lieu;
 use App\Models\Presence;
@@ -84,5 +85,8 @@ class UserController extends Controller
         
         return self::EARTH_RADIUS * $c;
     }
-
+public  function mes(){
+    $user = Utilisateur::all();
+    return UserRessource::collection($user);
+}
 }

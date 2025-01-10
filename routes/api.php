@@ -38,3 +38,4 @@ Route::get('/presences/verifie', [PresenceController::class, 'checkTodayPresence
 
 
 Route::get('user/{utilisateur}', [UserController::class,"voir"])->name('voir');
+Route::get('mes', [UserController::class,"mes"]);

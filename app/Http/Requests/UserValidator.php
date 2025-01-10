@@ -28,6 +28,8 @@ class UserValidator extends FormRequest
             'password' => 'required|min:6',
             "email"=>"required|email|unique:utilisateurs,email",
             "categorie_id"=>"required|exists:categories,id",
+            'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+
         ];
     }
 }

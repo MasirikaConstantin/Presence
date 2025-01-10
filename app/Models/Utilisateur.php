@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;  // Ajoutez cette ligne
 
 
@@ -33,7 +34,8 @@ class Utilisateur extends Authenticatable
         'password',
         'lieu_id',
         'categorie_id',
-        "address"
+        "address",
+        'image'
 
     ];
 
@@ -90,15 +92,19 @@ class Utilisateur extends Authenticatable
 
 
 
-// Relation avec Categorie
-public function categorie()
-{
-    return $this->belongsTo(Categorie::class);
-}
+    // Relation avec Categorie
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class);
+    }
 
-// Relation avec Presence
-public function presences()
-{
-    return $this->hasMany(Presence::class);
-}
+    // Relation avec Presence
+    public function presences()
+    {
+        return $this->hasMany(Presence::class);
+    }
+    public function profilUrl(){
+        //return $this->image ? asset('storage/' . $this->image) : null;
+        return Storage::disk('public')->url($this->image); 
+    }
 }

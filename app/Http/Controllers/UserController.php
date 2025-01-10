@@ -10,6 +10,7 @@ use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use \Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -24,23 +25,31 @@ class UserController extends Controller
         $categories = Categorie::orderBy('nom')->get();
         return view('users.create',['lieux' => $lieux,"user"=>new User(),'categories'=>$categories]);
     }
-    public function store(UserValidator $request)
+    public function store(Utilisateur $user, UserValidator $request)
     {
         
 
-             Utilisateur::create([
-                'name' => $request->name,
-                "lieu_id" => $request->lieu_id,
-                "categorie_id"=>$request->categorie_id,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
+        //dd($request->validated());
+             
+            /*$request->validate([
+                'name' => 'required|string|max:255',
+                'lieu_id' => 'required|exists:lieus,id',
+                'email' => 'required|email|unique:utilisateurs,email,' . $user->id,
+                'password' => 'nullable|string|min:6',
+                'categorie_id' => 'required|exists:categories,id',
+
+                'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+    
+            ]);*/
+            Utilisateur::create($this->extractData(new Utilisateur() ,$request));
+        
 
 
             return redirect()->route('users.create')
                 ->with('success', 'Utilisateur créé avec succès.');
     }
 
+    
     
 
     public function show(Utilisateur $user){
@@ -53,25 +62,59 @@ class UserController extends Controller
     }
 
     public function update(Utilisateur $user , Request $request){
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'lieu_id' => 'required|exists:lieus,id',
             'email' => 'required|email|unique:utilisateurs,email,' . $user->id,
             'password' => 'nullable|string|min:6',
+            'categorie_id' => 'required|exists:categories,id',
+            'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+
         ]);
+        $user->update($this->extractData($user,$request));
     
-        // Mettre à jour les informations de l'utilisateur
-        $user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'lieu_id' => $validated['lieu_id'],
-            'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
-        ]);
-    
+      
     
         return redirect()->route('users.index')->with('success', 'Utilisateur  mis à jour avec succès.');
     
     }
+
+    private function extractData(Utilisateur $user,  Request $request){
+
+        $validated =$request->validate([
+            'name' => 'required|string|max:255',
+            'lieu_id' => 'required|exists:lieus,id',
+            'email' => 'required|email|unique:utilisateurs,email,' . $user->id,
+            'password' => 'nullable|string|min:6',
+            "categorie_id"=>"required|exists:categories,id",
+
+            'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+
+        ]);
+        $data=[
+            'name' => $validated['name'],
+            'image' => $validated['image'] ?? '',
+            'email' => $validated['email'],
+            'lieu_id' => $validated['lieu_id'],
+            'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
+        ];
+        //dd($data);
+        /**
+        * @var UploadedFile $image
+         */
+        $image=$data['image'];
+        if($image==null || $image->getError()){
+            return $data;
+        }
+        if($user->image){
+            Storage::disk('public')->delete($user->image);
+        }
+            $data['image']=$image->store("profil",'public');
+        return $data;
+    }
+
+    
+
 
     public function voir( $id){
         $utilisateur = Utilisateur::with(['lieu', 'categorie', 'presences'])->findOrFail($id);
@@ -114,6 +157,10 @@ class UserController extends Controller
     return view('user-dashboard', compact('utilisateur', 'presences', 'joursTravailles', 'totalPayer'));
 
     }
+
+
+
+    
 
     private function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
     {

@@ -21,7 +21,9 @@ class GestionConnexion extends Controller
                 'password' => 'required|min:4|confirmed',
                 "lieu_id" => "required|exists:lieus,id",
                 "categorie_id" => "required|exists:categories,id",
-                "address"=>"nullable|min:5"
+                "address"=>"nullable|min:5",
+                'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+
                 
 
             ]);
@@ -32,6 +34,7 @@ class GestionConnexion extends Controller
                 'address' => $validated['address'],
                 'categorie_id' => $validated['categorie_id'],
                 'email' => $validated['email'],
+                'image' => $validated['image'],
                 'password' => Hash::make($validated['password']),
             ]);
 
@@ -118,6 +121,8 @@ class GestionConnexion extends Controller
                 'name' => 'sometimes|string|max:255',
                 'email' => 'sometimes|email|unique:users,email,' . $user->id,
                 'password' => 'sometimes|min:6|confirmed',
+                'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+
             ]);
 
             $updateData = [];
@@ -162,5 +167,26 @@ class GestionConnexion extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+
+
+
+    private function extractData(Astuce $astuce,Astucesrequest $request){
+        $data=$request->validated();
+        //dd($data);
+        /**
+        * @var UploadedFile $image
+         */
+        $image=$request->validated('image');
+        if($image==null || $image->getError()){
+            return $data;
+        }
+        if($astuce->image){
+            Storage::disk('public')->delete($astuce->image);
+        }
+            $data['image']=$image->store("imageastuces",'public');
+        return $data;
     }
 }
