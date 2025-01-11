@@ -88,7 +88,13 @@ class Utilisateur extends Authenticatable
 }
 
 
-
+public function getImageAttribute()
+{
+    if ($this->attributes['image']) {
+        return env('APP_URL') . '/storage/' . $this->attributes['image'];
+    }
+    return null;
+}
 
 
 
