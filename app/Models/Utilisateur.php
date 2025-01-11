@@ -87,6 +87,28 @@ class Utilisateur extends Authenticatable
     return $this->belongsTo(Lieu::class);  // Un utilisateur appartient à un seul lieu
 }
 
+public function imageUrl()
+{
+    // Vérifie si l'image commence déjà par http ou https
+    if (str_starts_with($this->image, 'http')) {
+        return $this->image;
+    }
+    
+    // Sinon, retourne l'URL avec Storage
+    return Storage::disk('public')->url($this->image);
+}
+
+public function profilUrl()
+{
+    // Vérifie si l'image commence déjà par http ou https
+    if (str_starts_with($this->image, 'http')) {
+        return $this->image;
+    }
+    
+    // Sinon, retourne l'URL avec Storage
+    return Storage::disk('public')->url($this->image);
+}
+
 
 public function getImageAttribute()
 {
