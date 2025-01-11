@@ -219,7 +219,7 @@ class GestionConnexion extends Controller
         ]);
     }
 
-    public function imagedeledata(User $user)
+    public function imagedeledata(Utilisateur $user)
     {
         try {
             if ($user->image) {
