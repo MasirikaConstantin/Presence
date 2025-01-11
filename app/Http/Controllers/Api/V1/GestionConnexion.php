@@ -255,7 +255,7 @@ class GestionConnexion extends Controller
         }
     }
 
-    public function updateImage(User $user,ImageVAlidate $request)
+    public function updateImage(Utilisateur $user,ImageVAlidate $request)
     {
        
         $user->update($this->extractData($user ,$request));
@@ -263,7 +263,7 @@ class GestionConnexion extends Controller
 
         return new UserRessource($user);
     }
-    private function extractData(User $user,  Request $request){
+    private function extractData(Utilisateur $user,  Request $request){
 
         $validated =$request->validate([
             'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
