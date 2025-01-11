@@ -14,6 +14,14 @@ class PresenceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            
+                        "id"=>$this->id,
+                        "utilisateur_id"=>$this->utilisateur_id,
+                        "type"=>$this->type,
+                        "date"=>$this->date,
+                        "distance"=>$this->distance,
+                        "statut"=>$this->statut,
+        ];
     }
 }
