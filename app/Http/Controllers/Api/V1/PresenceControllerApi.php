@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class PresenceControllerApi extends Controller
 {
     public function mespresence(Utilisateur $user){
-        $presence = $user->depenses;
+        $presence = $user->presences;
 
         return response()->json($presence, 201);
         return PresenceResource::collection($presence);

@@ -69,7 +69,7 @@ class Utilisateur extends Authenticatable
             $user->matricule = self::generateMatricule();
         });
     }
-    
+   
     private static function generateMatricule()
     {
         $prefix = 'AG';
