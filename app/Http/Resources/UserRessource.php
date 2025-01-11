@@ -23,6 +23,9 @@ class UserRessource extends JsonResource
             "matricule" =>$this->matricule,
             "lieu_id" =>$this->lieu_id,
             "categorie_id" =>$this->categorie_id,
+            "lieu" => new LieuResource($this->whenLoaded('lieu')),
+            "categorie" =>new CategorieResource($this->whenLoaded('categorie')),
+
         ];
     }
 }

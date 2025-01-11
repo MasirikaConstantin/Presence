@@ -89,7 +89,9 @@ public  function mes(){
     $user = User::all();
     return UserRessource::collection($user);
 }
-public function show(Utilisateur $user){
-    return new UserRessource($user);
+public function show(Utilisateur $utilisateur){
+    $utilisateur->load('lieu', 'categorie');
+    //return response()->json($utilisateur);
+    return new UserRessource($utilisateur);
 }
 }
