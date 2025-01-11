@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserRessource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -182,13 +183,14 @@ class GestionConnexion extends Controller
 
 
 
-    private function extractData(Astuce $astuce,Astucesrequest $request){
+    /*
+        private function extractData(Astuce $astuce,Astucesrequest $request){
         $data=$request->validated();
         //dd($data);
         /**
         * @var UploadedFile $image
          */
-        $image=$request->validated('image');
+       /* $image=$request->validated('image');
         if($image==null || $image->getError()){
             return $data;
         }
@@ -197,8 +199,8 @@ class GestionConnexion extends Controller
         }
             $data['image']=$image->store("imageastuces",'public');
         return $data;
-    }
-
+        }
+    */
 
     public function updatePassword(Request $request)
     {
@@ -214,5 +216,41 @@ class GestionConnexion extends Controller
         return response()->json([
             'success' => true,
         ]);
+    }
+
+    public function imagedeledata(User $user)
+    {
+        try {
+            if ($user->image) {
+                // Extraire le chemin relatif de l'URL complète
+                $relativePath = str_replace(env('APP_URL') . '/storage/', '', $user->getRawOriginal('image'));
+                
+                // Supprimer le fichier physique
+                if (Storage::disk('public')->exists($relativePath)) {
+                    Storage::disk('public')->delete($relativePath);
+                }
+    
+                // Mettre à null le champ image dans la BDD
+                $user->image = null;
+                $user->save();
+    
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Image supprimée avec succès',
+                    'user' => new UserRessource($user)
+                ], 200);
+            }
+    
+            return response()->json([
+                'status' => false,
+                'message' => 'Aucune image à supprimer'
+            ], 404);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erreur lors de la suppression : ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

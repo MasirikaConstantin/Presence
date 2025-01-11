@@ -41,3 +41,4 @@ Route::get('user/{utilisateur}', [UserController::class,"voir"])->name('voir');
 Route::get('users/{utilisateur}', [UserController::class,"show"])->middleware('auth:sanctum');
 Route::get('mes', [UserController::class,"mes"]);
 Route::put('/password', [GestionConnexion::class, 'updatePassword'])->middleware('auth:sanctum');
+Route::post('/imagedelete/{user}', [GestionConnexion::class, 'imagedeledata'])->middleware('auth:sanctum');
