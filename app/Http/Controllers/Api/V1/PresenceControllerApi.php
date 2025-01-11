@@ -30,11 +30,13 @@ class PresenceControllerApi extends Controller
 
 
 
-    public function mespresence( $id){
-        $utilisateur = Utilisateur::with(['lieu', 'categorie', 'presences'])->findOrFail($id);
+    public function mespresence($id)
+{
+    // Récupérer l'utilisateur avec ses relations
+    $utilisateur = Utilisateur::with(['lieu', 'categorie', 'presences'])->findOrFail($id);
 
-        // Traitement des présences
-        $presences = $utilisateur->presences->map(function ($presence) use ($utilisateur) {
+    // Traitement des présences
+    $presences = $utilisateur->presences->map(function ($presence) use ($utilisateur) {
         $presenceLat = (float) str_replace(',', '.', $presence->latitude);
         $presenceLon = (float) str_replace(',', '.', $presence->longitude);
         $lieuLat = (float) str_replace(',', '.', $utilisateur->lieu->latitude);
@@ -64,17 +66,32 @@ class PresenceControllerApi extends Controller
         return $presence;
     });
 
-    // Calcul des jours travaillés et total à payer
-    $joursTravailles = $presences->filter(fn($p) => str_contains($p->statut, 'Présent'))->count();
+    // Grouper les présences par date
+    $presencesParDate = $presences->groupBy(function ($presence) {
+        return Carbon::parse($presence->date)->format('Y-m-d'); // Grouper par date (sans l'heure)
+    });
+
+    // Compter les jours travaillés
+    $joursTravailles = 0;
+    foreach ($presencesParDate as $date => $presencesDuJour) {
+        // Vérifier si la date contient à la fois une arrivée (type 1) et un départ (type 0)
+        $aArrivee = $presencesDuJour->contains('type', 1);
+        $aDepart = $presencesDuJour->contains('type', 0);
+
+        if ($aArrivee && $aDepart) {
+            $joursTravailles++;
+        }
+    }
+
+    // Calculer le total à payer
     $totalPayer = $joursTravailles * $utilisateur->categorie->salaire;
 
+    // Retourner la réponse JSON
     return response()->json([
-            'presences' =>  PresenceResource::collection($presences),
-            'jours_travailles' => $joursTravailles,
+        'presences' => PresenceResource::collection($presences),
+        'jours_travailles' => $joursTravailles,
     ]);
-    //return view('user-dashboard', compact('utilisateur', 'presences', 'joursTravailles', 'totalPayer'));
-
-    }
+}
 
 
 
