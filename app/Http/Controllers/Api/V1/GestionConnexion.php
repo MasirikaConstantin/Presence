@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ImageVAlidate;
 use App\Http\Resources\UserRessource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -252,5 +253,37 @@ class GestionConnexion extends Controller
                 'message' => 'Erreur lors de la suppression : ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function updateImage(User $user,ImageVAlidate $request)
+    {
+       
+        $user->update($this->extractData($user ,$request));
+        
+
+        return new UserRessource($user);
+    }
+    private function extractData(User $user,  Request $request){
+
+        $validated =$request->validate([
+            'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+
+        ]);
+        $data=[
+            'image' => $validated['image'] ?? '',
+        ];
+        //dd($data);
+        /**
+        * @var UploadedFile $image
+         */
+        $image=$data['image'];
+        if($image==null || $image->getError()){
+            return $data;
+        }
+        if($user->image){
+            Storage::disk('public')->delete($user->image);
+        }
+            $data['image']=$image->store("profil",'public');
+        return $data;
     }
 }
