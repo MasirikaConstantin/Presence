@@ -18,11 +18,21 @@ class PresenceResource extends JsonResource
             
                         "id"=>$this->id,
                         "utilisateur_id"=>$this->utilisateur_id,
-                        "type"=>$this->type,
-                        "date"=>$this->date,
+                        "type" => $this->getTypeLabel(), // Transformation du type                        "date"=>$this->date,
                         "distance"=>$this->distance,
                         "statut"=>$this->statut,
                         "created_at"=>$this->created_at,
         ];
+
+        
+    }
+    /**
+     * Retourne "arrivé" si type vaut 1, sinon "départ".
+     *
+     * @return string
+     */
+    protected function getTypeLabel()
+    {
+        return $this->type === 1 ? 'arrivé' : 'départ';
     }
 }
