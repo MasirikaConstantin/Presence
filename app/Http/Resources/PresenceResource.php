@@ -22,6 +22,7 @@ class PresenceResource extends JsonResource
                         "date"=>$this->date,
                         "distance"=>$this->distance,
                         "statut"=>$this->statut,
+                        "created_at"=>$this->created_at,
         ];
     }
 }
