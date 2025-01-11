@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\GestionConnexion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\PresenceController;
+use App\Http\Controllers\Api\V1\PresenceControllerApi;
 use App\Http\Controllers\Api\V1\UserController;
 
 Route::get('/user', function (Request $request) {
@@ -43,3 +44,4 @@ Route::get('mes', [UserController::class,"mes"]);
 Route::put('/password', [GestionConnexion::class, 'updatePassword'])->middleware('auth:sanctum');
 Route::post('/imagedelete/{user}', [GestionConnexion::class, 'imagedeledata'])->middleware('auth:sanctum');
 Route::post('/image/{user}', [GestionConnexion::class, 'updateImage'])->middleware('auth:sanctum');
+Route::get('/mespresence/{user}', [PresenceControllerApi::class,"mespresence"]);
