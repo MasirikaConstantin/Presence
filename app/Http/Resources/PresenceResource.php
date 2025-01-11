@@ -21,7 +21,7 @@ class PresenceResource extends JsonResource
                         "type" => $this->getTypeLabel(), // Transformation du type                        "date"=>$this->date,
                         "distance"=>$this->distance,
                         "statut"=>$this->statut,
-                        "created_at"=>$this->created_at,
+                        "date"=>$this->date,
         ];
 
         
