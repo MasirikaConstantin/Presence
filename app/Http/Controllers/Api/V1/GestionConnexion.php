@@ -113,45 +113,51 @@ class GestionConnexion extends Controller
     }
 
     public function update(Request $request)
-    {
-        try {
-            $user = $request->user();
+{
+    try {
+        // Récupérer l'utilisateur authentifié
+        $utilisateur = $request->user();
 
-            $validated = $request->validate([
-                'name' => 'sometimes|string|max:255',
-                'adress' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email|unique:users,email,' . $user->id,
-                'password' => 'sometimes|min:6|confirmed',
-                'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+        // Valider les données de la requête
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'address' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:utilisateurs,email,' . $utilisateur->id, // Utilisez 'utilisateurs' comme nom de table
+            'password' => 'sometimes|min:6|confirmed',
+            'image' => ['nullable', 'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+        ]);
 
-            ]);
-
-            $updateData = [];
-            if (isset($validated['name'])) $updateData['name'] = $validated['name'];
-            if (isset($validated['adress'])) $updateData['adress'] = $validated['adress'];
-            if (isset($validated['email'])) $updateData['email'] = $validated['email'];
-            if (isset($validated['password'])) {
-                $updateData['password'] = Hash::make($validated['password']);
-            }
-
-            $user->update($updateData);
-
-            return response()->json([
-                'message' => 'Profil mis à jour avec succès',
-                'user' => $user
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => 'Erreur de validation',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Une erreur est survenue',
-                'error' => $e->getMessage()
-            ], 500);
+        // Préparer les données à mettre à jour
+        $updateData = [];
+        if (isset($validated['name'])) $updateData['name'] = $validated['name'];
+        if (isset($validated['address'])) $updateData['address'] = $validated['address'];
+        if (isset($validated['email'])) $updateData['email'] = $validated['email'];
+        if (isset($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
         }
+
+        // Mettre à jour l'utilisateur
+        $utilisateur->update($updateData);
+
+        // Retourner une réponse JSON
+        return response()->json([
+            'message' => 'Profil mis à jour avec succès',
+            'user' => $utilisateur
+        ]);
+    } catch (ValidationException $e) {
+        // Gérer les erreurs de validation
+        return response()->json([
+            'message' => 'Erreur de validation',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        // Gérer les autres erreurs
+        return response()->json([
+            'message' => 'Une erreur est survenue',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     public function delete(Request $request)
     {
