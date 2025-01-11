@@ -25,7 +25,8 @@ class UserRessource extends JsonResource
             "categorie_id" =>$this->categorie_id,
             "lieu" => new LieuResource($this->whenLoaded('lieu')),
             "categorie" =>new CategorieResource($this->whenLoaded('categorie')),
-            "created_at"=>$this->created_at
+            "created_at"=>$this->created_at,
+            'image'=>$this->image
 
         ];
     }
