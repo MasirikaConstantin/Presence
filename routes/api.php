@@ -45,3 +45,4 @@ Route::put('/password', [GestionConnexion::class, 'updatePassword'])->middleware
 Route::post('/imagedelete/{user}', [GestionConnexion::class, 'imagedeledata'])->middleware('auth:sanctum');
 Route::post('/image/{user}', [GestionConnexion::class, 'updateImage'])->middleware('auth:sanctum');
 Route::get('/mespresence/{user}', [PresenceControllerApi::class,"mespresence"]);
+Route::get('toutes/', [PresenceControllerApi::class,"toutes"]);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PresenceResource;
+use App\Models\Presence;
 use App\Models\Utilisateur;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -109,5 +110,9 @@ class PresenceControllerApi extends Controller
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         
         return self::EARTH_RADIUS * $c;
+    }
+    public  function toutes(){
+        $presence = Presence::all();
+        return response()->json($presence, 201);
     }
 }
