@@ -48,8 +48,8 @@ Route::post('/image/{user}', [GestionConnexion::class, 'updateImage'])->middlewa
 Route::get('/mespresence/{user}', [PresenceControllerApi::class,"mespresence"]);
 Route::get('toutes/', [PresenceControllerApi::class,"toutes"]);
 
-Route::get('/presences/verifie', [PresenceController::class, 'verifiePresence']);
-Route::post('/presences', [PresenceController::class, 'store']);
+Route::get('/presencess/verifie', [PresenceController::class, 'verifiePresence']);
+Route::post('/presencess', [PresenceController::class, 'store']);
 
 Route::get('/lieus', [LieuController::class, 'index']);
 Route::get('/lieus/{id}', [LieuController::class, 'show']);
