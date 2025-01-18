@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lieu;
 use App\Models\Presence;
+use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -84,5 +86,90 @@ class PresenceController extends Controller
             'status' => $status,
             'presence_jour' => $presences
         ]);
+    }
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function verifiePresence(Request $request)
+    {
+        $utilisateur_id = $request->query('utilisateur_id');
+        $utilisateur = Utilisateur::find($utilisateur_id);
+
+        if (!$utilisateur) {
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+        }
+
+        $lieu = Lieu::find($utilisateur->lieu_id);
+
+        if (!$lieu) {
+            return response()->json(['message' => 'Lieu de travail non trouvé'], 404);
+        }
+
+        $presence = Presence::where('utilisateur_id', $utilisateur_id)
+            ->whereDate('date', Carbon::today())
+            ->orderBy('date', 'desc')
+            ->first();
+
+        $status = [
+            'debut_a' => false,
+            'fin_a' => false,
+            'distance' => $this->calculateDistance($lieu->latitude, $lieu->longitude, $presence->latitude, $presence->longitude),
+        ];
+
+        if ($presence) {
+            $status['debut_a'] = $presence->type === 1;
+            $status['fin_a'] = $presence->type === 2;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /*public function store(Request $request)
+    {
+        $request->validate([
+            'utilisateur_id' => 'required|exists:utilisateurs,id',
+            'longitude' => 'required|string',
+            'latitude' => 'required|string',
+            'type' => 'required|integer|in:1,2',
+            'date' => 'required|date',
+        ]);
+
+        $presence = Presence::create($request->all());
+
+        return response()->json($presence, 201);
+    }
+*/
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // Rayon de la Terre en mètres
+
+        $latFrom = deg2rad($lat1);
+        $lonFrom = deg2rad($lon1);
+        $latTo = deg2rad($lat2);
+        $lonTo = deg2rad($lon2);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+        return $angle * $earthRadius;
     }
 }

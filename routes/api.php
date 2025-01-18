@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\PresenceController;
 use App\Http\Controllers\Api\V1\PresenceControllerApi;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\LieuController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -46,3 +47,9 @@ Route::post('/imagedelete/{user}', [GestionConnexion::class, 'imagedeledata'])->
 Route::post('/image/{user}', [GestionConnexion::class, 'updateImage'])->middleware('auth:sanctum');
 Route::get('/mespresence/{user}', [PresenceControllerApi::class,"mespresence"]);
 Route::get('toutes/', [PresenceControllerApi::class,"toutes"]);
+
+Route::get('/presences/verifie', [PresenceController::class, 'verifiePresence']);
+Route::post('/presences', [PresenceController::class, 'store']);
+
+Route::get('/lieus', [LieuController::class, 'index']);
+Route::get('/lieus/{id}', [LieuController::class, 'show']);
