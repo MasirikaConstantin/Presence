@@ -80,7 +80,7 @@
                         <td class="px-6 py-4">
                            @if ($user->image)
                             <div class="flex flex-col items-center pb-1">
-                                <img class="w-24 h-24 mb- rounded-full shadow-lg" src="{{ $user->profilUrl() }}" alt="{{ $user->name }}"/>
+                                <img class="w-24 h-24 mb- rounded-full shadow-lg" src="{{ $user->image }}" alt="{{ $user->name }}"/>
                             </div>
                             @else
                             <button>Vide</button>

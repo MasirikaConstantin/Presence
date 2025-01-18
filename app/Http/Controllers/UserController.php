@@ -25,30 +25,44 @@ class UserController extends Controller
         $categories = Categorie::orderBy('nom')->get();
         return view('users.create',['lieux' => $lieux,"user"=>new User(),'categories'=>$categories]);
     }
-    public function store(Utilisateur $user, UserValidator $request)
+    public function store(UserValidator $request)
     {
-        
+        // Valider les données de la requête
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'lieu_id' => 'required|exists:lieus,id',
+        'email' => 'required|email|unique:utilisateurs,email',
+        'password' => 'nullable|string|min:6',
+        'categorie_id' => 'required|exists:categories,id',
+        'image' => ['nullable', 'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+    ]);
 
-        //dd($request->validated());
-             
-            /*$request->validate([
-                'name' => 'required|string|max:255',
-                'lieu_id' => 'required|exists:lieus,id',
-                'email' => 'required|email|unique:utilisateurs,email,' . $user->id,
-                'password' => 'nullable|string|min:6',
-                'categorie_id' => 'required|exists:categories,id',
+    // Préparer les données pour la création ou la mise à jour
+    $data = [
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'categorie_id' => $validated['categorie_id'],
+        'lieu_id' => $validated['lieu_id'],
+        'password' => $validated['password'] ? bcrypt($validated['password']) :"",
+    ];
 
-                'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
-    
-            ]);*/
-            Utilisateur::create($this->extractData(new Utilisateur() ,$request));
-        
-
-
-            return redirect()->route('users.create')
-                ->with('success', 'Utilisateur créé avec succès.');
+    // Gérer l'image si elle est présente
+    if ($request->hasFile('image') && $request->file('image')->isValid()) {
+       
+        // Stocker la nouvelle image
+        $data['image'] = $request->file('image')->store('profil', 'public');
+    } else {
+        // Conserver l'ancienne image si aucune nouvelle image n'est fournie
+        $data['image'] = "";
     }
 
+    $user=new Utilisateur();
+        $user->fill($data);
+        $user->save();
+    
+        return redirect()->route('users.create')
+            ->with('success', 'Utilisateur créé avec succès.');
+    }
     
     
 
@@ -79,40 +93,42 @@ class UserController extends Controller
     
     }
 
-    private function extractData(Utilisateur $user,  Request $request){
+    private function extractData(Utilisateur $user, Request $request)
+{
+    // Valider les données de la requête
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'lieu_id' => 'required|exists:lieus,id',
+        'email' => 'required|email|unique:utilisateurs,email,' . $user->id,
+        'password' => 'nullable|string|min:6',
+        'categorie_id' => 'required|exists:categories,id',
+        'image' => ['nullable', 'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
+    ]);
 
-        $validated =$request->validate([
-            'name' => 'required|string|max:255',
-            'lieu_id' => 'required|exists:lieus,id',
-            'email' => 'required|email|unique:utilisateurs,email,' . $user->id,
-            'password' => 'nullable|string|min:6',
-            "categorie_id"=>"required|exists:categories,id",
+    // Préparer les données pour la création ou la mise à jour
+    $data = [
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'lieu_id' => $validated['lieu_id'],
+        'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
+    ];
 
-            'image'=> ["nullable",'max:5120', 'mimes:png,jpg,jpeg,gif,PNG,JPEG,JPG'],
-
-        ]);
-        $data=[
-            'name' => $validated['name'],
-            'image' => $validated['image'] ?? '',
-            'email' => $validated['email'],
-            'lieu_id' => $validated['lieu_id'],
-            'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
-        ];
-        //dd($data);
-        /**
-        * @var UploadedFile $image
-         */
-        $image=$data['image'];
-        if($image==null || $image->getError()){
-            return $data;
-        }
-        if($user->image){
+    // Gérer l'image si elle est présente
+    if ($request->hasFile('image') && $request->file('image')->isValid()) {
+        // Supprimer l'ancienne image si elle existe
+        if ($user->image) {
             Storage::disk('public')->delete($user->image);
         }
-            $data['image']=$image->store("profil",'public');
-        return $data;
+
+        // Stocker la nouvelle image
+        $data['image'] = $request->file('image')->store('profil', 'public');
+    } else {
+        // Conserver l'ancienne image si aucune nouvelle image n'est fournie
+        $data['image'] = $user->image ?? null;
     }
 
+    return $data;
+}
     
 
 
