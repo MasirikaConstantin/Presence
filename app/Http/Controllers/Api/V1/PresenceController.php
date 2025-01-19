@@ -122,27 +122,35 @@ class PresenceController extends Controller
             return response()->json(['message' => 'Lieu de travail non trouvé'], 404);
         }
 
-        $presence = Presence::where('utilisateur_id', $utilisateur_id)
+        $presence =  $request->validate(
+            [
+                'latitude' => 'required|string',
+                'longitude' => 'required|string',
+    
+        ]);
+        
+        /* Presence::where('utilisateur_id', $utilisateur_id)
             ->whereDate('date', Carbon::today())
             ->orderBy('date', 'desc')
-            ->first();
+            ->first();*/
 
         $status = [
             'debut_a' => false,
             'fin_a' => false,
-            'distance' => $this->calculateDistance($lieu->latitude, $lieu->longitude, $presence->latitude, $presence->longitude),
+            'distance' => $this->calculateDistance($lieu->latitude, $lieu->longitude, $presence['latitude'], $presence['longitude']),
         ];
 
-        if ($presence) {
+       /* if ($presence) {
             $status['debut_a'] = $presence->type === 1;
             $status['fin_a'] = $presence->type === 2;
-        }
+        }*/
 
         return response()->json(['status' => $status]);
     }
 
-    /*public function store(Request $request)
-    {
+    /*
+        public function store(Request $request)
+        {
         $request->validate([
             'utilisateur_id' => 'required|exists:utilisateurs,id',
             'longitude' => 'required|string',
