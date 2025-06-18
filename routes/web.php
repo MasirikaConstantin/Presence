@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\DocumentationController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GestionCategorie;
@@ -43,6 +44,9 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Documentation de l'API
+Route::get('/docs', [\App\Http\Controllers\DocsController::class, 'index'])->name('docs');
 
 
 Route::get('/change-language/{lang}', function ($lang) {

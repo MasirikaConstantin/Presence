@@ -131,14 +131,8 @@ class PresenceController extends Controller
     
         ]);
         
-        /* Presence::where('utilisateur_id', $utilisateur_id)
-            ->whereDate('date', Carbon::today())
-            ->orderBy('date', 'desc')
-            ->first();*/
-
+       
         $status = [
-            'debut_a' => false,
-            'fin_a' => false,
             'distance' => $this->calculateDistance($lieu->latitude, $lieu->longitude, $presence['latitude'], $presence['longitude']),
         ];
 
